@@ -1,0 +1,12 @@
+# IDE hidden directories
+.vscode
+.idea
+# All references to files that this app handles
+*.xls
+*.png
+*.jpg
+*.PNG
+*.JPG
+**/__pycache__/
+*.pyc
+/AeView/Widgets/ae_session.json
