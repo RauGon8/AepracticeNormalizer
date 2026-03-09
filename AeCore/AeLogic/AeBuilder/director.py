@@ -1,21 +1,22 @@
+from typing import Callable, Any, Dict
 from aelogging import info, error
 
 
-# Controla el orden exacto en el que se hacen los pasos
+#controla el orden exacto en el que se hacen los pasos
 class AeDirector:
-    def __init__(self, builder, config, progress_callback=None):
+    def __init__(self, builder: Any, config: Dict, progress_callback: Callable = None):
         self.builder = builder
         self.config = config
         self.progress_callback = progress_callback
 
-    # Manda el progreso a la barra de carga de la interfaz
-    def _progress(self, value, message=""):
+    #manda el progreso a la barra de carga de la interfaz
+    def _progress(self, value: int, message: str = "") -> None:
         if self.progress_callback:
             self.progress_callback(value, message)
         info(f"Director: {message}")
 
-    # Limpia y prepara las variables que vienen de la configuracion
-    def _extraer_rutas(self):
+    #limpia y prepara las rutas de los archivos leidos de la configuracion
+    def _extraer_rutas(self) -> tuple:
         rutas_maestras = self.config.get('rutas_maestras', {})
 
         ruta_combinado = rutas_maestras.get(0, rutas_maestras.get('0', ['']))

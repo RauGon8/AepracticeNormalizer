@@ -3,6 +3,7 @@
 .idea
 # All references to files that this app handles
 *.xls
+*.xlsx
 *.png
 *.jpg
 *.PNG

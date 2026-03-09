@@ -13,6 +13,12 @@ class Worker(QThread):
         self.config = config
 
     def run(self):
+        """
+        punto entrada del hilo
+
+        llamamos al facade para que lance la construccion de pasos
+        :return:
+        """
         try:
             info("Worker: iniciando proceso en segundo plano.")
 
@@ -32,4 +38,8 @@ class Worker(QThread):
             self.error_signal.emit(msg)
 
     def _emit_progress(self, percent, message):
+        """
+        este metodo lo usa el director para actualizar el estado de los distintos pasos
+
+        """
         self.progress.emit(percent, message)

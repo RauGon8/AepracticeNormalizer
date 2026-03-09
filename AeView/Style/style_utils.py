@@ -3,6 +3,15 @@ from PySide6.QtGui import QColor
 
 # aplica el brillo exterior si esta activo o lo quita por completo
 def gestionar_estilo_neon(ventana, activo=False, color_hex="#00beff"):
+    """
+    aplicamos el estilo neon para activar o desactivarlo en la ventana
+
+
+
+    :param ventana: la ventana del Qwidget
+    :param activo: indicamos si el efecto neon debe estar activo o no
+    :param color_hex: codigo hexadecimal del color
+    """
     if activo:
         if not color_hex: color_hex = "#00beff"
 
@@ -34,6 +43,12 @@ class ThemeManager:
     # hojas de estilo
     @staticmethod
     def get_theme(name="defecto"):
+        """
+        devolvemos la hoja de estilos css dependiendo del nombre solicitado
+
+        :param name: id del tema seleccionado
+        :return: una cadena de texto que contiene el estilo css que se aplica al widget
+        """
         css_defecto = """
             QWidget { color: #cdd6f4; font-family: "Segoe UI", sans-serif; font-size: 13px; background-color: transparent; }
             [objectName^="outer_frame"] { background-color: #11111b; border: 2px solid #89b4fa; border-radius: 15px; }
@@ -79,6 +94,7 @@ class ThemeManager:
         temas = {"defecto": css_defecto, "retro": css_retro, "moderno": css_moderno}
         return temas.get(name, css_defecto)
 
+    #aplicamos el css
     @staticmethod
     def apply_theme(widget, theme_name):
         estilo = ThemeManager.get_theme(theme_name)

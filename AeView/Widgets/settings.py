@@ -41,6 +41,9 @@ class SettingsWindow(QWidget):
 
     # guarda y aplica al momento
     def guardar_y_aplicar(self):
+        """
+        guardamos ajustes actuales y actualizamos interfaz al momento
+        """
         tema_seleccionado = self.ui.tipo_color.currentText()
         neon_activo = self.ui.activar_neon.isChecked()
 

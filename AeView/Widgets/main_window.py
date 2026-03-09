@@ -66,6 +66,12 @@ class MainWindow(QWidget):
 
     #lee los ajustes y recarga el aspecto grafico entero
     def aplicar_configuracion_visual(self):
+        """
+        leemos los ajustes guardados en settings manager
+
+        refresca los estilos css y aplica el efecto neon y repintamos con repaint() para
+        actualizar al momento la pantalla
+        """
         ajustes = self.settings_manager.cargar_ajustes()
         tema = ajustes.get("tema", "defecto")
         neon_activo = ajustes.get("neon_activo", False)
@@ -89,6 +95,7 @@ class MainWindow(QWidget):
     def abrir_ajustes(self):
         if self.ventana_ajustes is None:
             self.ventana_ajustes = SettingsWindow(self)
+            self.ventana_ajustes.setWindowModality(Qt.ApplicationModal)
         self.ventana_ajustes.show()
 
     def actualizar_vista_lista(self):
@@ -96,6 +103,9 @@ class MainWindow(QWidget):
         self.list_model.setStringList(self.rutas_por_tipo.get(idx, []))
 
     def anadir_ruta(self):
+        """
+        abrimos un QMessageBox para selecionar entre archivos o carpetas y dependiendo de ello se añade una cosao u la otra
+        """
         idx = self.ui.file_type.currentIndex()
 
         if idx == 1:
@@ -140,6 +150,10 @@ class MainWindow(QWidget):
                 self.actualizar_vista_lista()
 
     def eliminar_ruta(self):
+        """
+        elimina internamente la ruta seleccionada por el usuario y actualiza la vista
+        :return:
+        """
         indexes = self.ui.listView.selectedIndexes()
         if indexes:
             row = indexes[0].row()
@@ -148,6 +162,9 @@ class MainWindow(QWidget):
             self.actualizar_vista_lista()
 
     def eliminar_todas(self):
+        """
+        permitimos eliminar todos los tipos de ruta, o solo un tipo de archivo
+        """
         #cremos el cuadro
         msg_box = QMessageBox(self)
         msg_box.setWindowTitle("Eliminar rutas")
@@ -174,7 +191,12 @@ class MainWindow(QWidget):
             self.ui.plainTextEdit.appendPlainText(">>> Sistema: Todas las listas han sido eliminadas.")
 
     def start_process(self):
-        #abrimos el buscador de window
+        """
+        iniciamos el procesamiento del backend pidiendo la carpeta de salida
+
+        pillamos la configuracion  y conectamos señales lanzando el hilo y desactivando el boton principal
+        para evitar errores
+        """
         carpeta_salida = QFileDialog.getExistingDirectory(self, "Seleccionar Carpeta de Salida")
 
         if not carpeta_salida:
@@ -198,6 +220,12 @@ class MainWindow(QWidget):
         self.ui.plainTextEdit.appendPlainText(f">>> Sistema: Iniciando proceso. Salida en: {carpeta_salida}")
 
     def update_progress_ui(self, value, message):
+        """
+        actualizamos los componentes visuales de progreso desde la señal del backend
+
+        :param value: porcentaje numerico para la barra de progreso
+        :param message: el mensaje descriptivo para el log
+        """
         self.ui.progressBar.setValue(value)
         self.ui.plainTextEdit.appendPlainText(message)
 
@@ -210,6 +238,9 @@ class MainWindow(QWidget):
         self.ui.pushButton.setEnabled(True)
 
     def closeEvent(self, event):
+        """
+        sirve para pillar las cosas antes de que la ventana se cierre y poder guardar el estado actual del programa
+        """
         combo_index = self.ui.file_type.currentIndex()
         orden_texto = self.ui.int_order.text()
 
@@ -217,6 +248,10 @@ class MainWindow(QWidget):
         event.accept()
 
     def mouseDoubleClickEvent(self, event):
+        """
+        doble click para maximizar la ventana
+        """
+
         if event.button() == Qt.LeftButton:
             pos = event.position().toPoint()
             rect = self.rect()
@@ -231,6 +266,10 @@ class MainWindow(QWidget):
             event.accept()
 
     def mousePressEvent(self, event):
+        """
+        gestiona el presionar raton, viendo si el usuario ha pinchado en la ventana y dependiendo de ello
+        la ventana se mueve o se redimensiona
+        """
         if event.button() == Qt.LeftButton:
             pos = event.position().toPoint()
             rect = self.rect()
@@ -259,6 +298,10 @@ class MainWindow(QWidget):
             event.accept()
 
     def mouseMoveEvent(self, event):
+        """
+        gestiona el movimiento del raton para actualizar el cursor, posteriormente tambien ejecuta la matematica para mover
+        o cambiar el tamaño de la ventana
+        """
         pos = event.position().toPoint()
         rect = self.rect()
         g_pos = event.globalPosition().toPoint()
@@ -307,7 +350,7 @@ class MainWindow(QWidget):
             self.move(g_pos - self.drag_pos)
 
         event.accept()
-
+    #restablecemos el cursor a su modo normal y finalizamos cualquier accion
     def mouseReleaseEvent(self, event):
         self.drag_pos = None
         self.resize_dir = ""
