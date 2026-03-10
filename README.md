@@ -17,8 +17,7 @@
 - [Descripción General](#-descripción-general)
 - [Características y Arquitectura](#️-características-y-arquitectura)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Instalación](#-instalación)
-- [Uso](#-uso)
+
 
 ---
 
