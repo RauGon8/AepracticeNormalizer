@@ -23,12 +23,16 @@ class XlsExporter(ABC):
 
 class LiteExporter(XlsExporter):
     """
-    exportador especifico para el formato LITE (Anexo X).
+    exportador especifico para el formato LITE
     """
 
     def export(self, df_tipo, nombre_base, carpeta_salida, orden_trabajo, fecha_actual):
         ruta_temp_xlsx = os.path.join(carpeta_salida, f"{nombre_base}.xlsx")
         ruta_final_xls = os.path.join(carpeta_salida, f"{nombre_base}.xls")
+
+        hipotesis = df_tipo.get('Hipotesis_Seleccionada', df_tipo.get('hipotesis_origen', ''))
+        # asignamos esta hipotesis directamente a la columna NOTAS
+        df_tipo['NOTAS'] = hipotesis
 
         cols_lite = ['DMR', 'huso', 'x', 'y', 'z', 'ID', 'Grado_Final', 'CIRCUITO', 'VANO', 'APOYO_INI',
                      'APOYO_FIN', 'TENSION', 'LONGITUD_VANO', 'TIPO_ANO', 'REGLAMENTO', 'DIST_REGLA',
@@ -201,6 +205,38 @@ class StandardExporter(XlsExporter):
         os.rename(ruta_temp_xlsx, ruta_final_xls)
         info(f"Creado archivo: {nombre_base}")
 
+class StandardExporterinfra(XlsExporter):
+    """
+    exportador para el formato estandar.
+    """
+
+    def export(self, df_tipo, nombre_base, carpeta_salida, orden_trabajo, fecha_actual):
+        ruta_temp_xlsx = os.path.join(carpeta_salida, f"{nombre_base}.xlsx")
+        ruta_final_xls = os.path.join(carpeta_salida, f"{nombre_base}.xls")
+
+        df_n = pd.DataFrame()
+        df_n['ID'] = df_tipo['ID']
+        df_n['UT'] = df_tipo['Ubicación Técnica']
+        df_n['DESCRIPCIÓN'] = df_tipo.get('Descripción', "")
+        df_n['TEXTO AMPLIADO'] = ""
+        df_n['REPERCUSIÓN'] = 0
+        df_n['FECHA INICIO AVISO'] = fecha_actual
+        df_n['ORDEN ORIGEN'] = str(orden_trabajo)
+        df_n['FECHA INICIO AVERÍA'] = fecha_actual
+        df_n['OPERACIÓN'] = df_tipo.get('Operacion', "")
+
+        df_n.to_excel(ruta_temp_xlsx, index=False, engine='openpyxl')
+        wb = load_workbook(ruta_temp_xlsx)
+        ws = wb.active
+
+        for i in range(1, 11): ws.column_dimensions[get_column_letter(i)].width = 22
+        wb.save(ruta_temp_xlsx)
+        wb.close()
+
+        if os.path.exists(ruta_final_xls): os.remove(ruta_final_xls)
+        os.rename(ruta_temp_xlsx, ruta_final_xls)
+        info(f"Creado archivo: {nombre_base}")
+
 
 def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
     """
@@ -334,8 +370,10 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
                     exporter = LiteExporter()
                 elif "2026" in nombre_base:
                     exporter = Exporter2026()
-                else:
+                elif "Vege" in nombre_base:
                     exporter = StandardExporter()
+                else:
+                    exporter= StandardExporterinfra()
 
                 exporter.export(df_tipo, nombre_base, carpeta_salida, orden_trabajo, fecha_actual)
 

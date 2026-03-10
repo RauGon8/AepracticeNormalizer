@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, QRect, QStringListModel
 
 from AeView.Ui.ui_main_window import Ui_Form
 from AeView.Style.style_utils import gestionar_estilo_neon, ThemeManager
-from settings import SettingsWindow
+from AeView.Widgets.settings import SettingsWindow
 from AeCore.Worker import Worker
 from AeCore.AeUtils.settings_manager import SettingsManager
 
@@ -364,10 +364,3 @@ class MainWindow(QWidget):
         self.resize_dir = ""
         self.setCursor(Qt.ArrowCursor)
         event.accept()
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
