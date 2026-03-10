@@ -130,9 +130,9 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
             #openpyxl
             for nombre_base in nombres_archivos:
                 ruta_temp_xlsx = os.path.join(carpeta_salida,
-                                              f"{orden_trabajo}_{nombre_base}.xlsx" if orden_trabajo else f"{nombre_base}.xlsx")
+                                              f"{nombre_base}.xlsx")
                 ruta_final_xls = os.path.join(carpeta_salida,
-                                              f"{orden_trabajo}_{nombre_base}.xls" if orden_trabajo else f"{nombre_base}.xls")
+                                              f"{nombre_base}.xls")
 
                 if "LITE" in nombre_base:
                     cols_lite = ['DMR', 'huso', 'x', 'y', 'z', 'ID', 'Grado_Final', 'CIRCUITO', 'VANO', 'APOYO_INI',
@@ -200,11 +200,7 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
                     ws.row_dimensions[2].height = 140
                     ws.row_dimensions[3].height = 20
 
-                    for i in range(1, 20):
-                        if i in [3, 4, 5]:
-                            ws.column_dimensions[get_column_letter(i)].width = 14
-                        else:
-                            ws.column_dimensions[get_column_letter(i)].width = 7
+                    for i in range(1, 11): ws.column_dimensions[get_column_letter(i)].width = 22
 
                     wb.save(ruta_temp_xlsx)
                     wb.close()
@@ -267,13 +263,7 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
                     df_n.to_excel(ruta_temp_xlsx, index=False, engine='openpyxl')
                     wb = load_workbook(ruta_temp_xlsx)
                     ws = wb.active
-                    ws.cell(row=1, column=10, value="EVIDENCIA GRÁFICA")
-                    link_font = Font(color="0000FF", underline="single")
-                    for r_idx, evi in enumerate(df_tipo['Evidencia_Grafica_Ruta'], 2):
-                        if evi:
-                            c = ws.cell(row=r_idx, column=10, value="Imagen")
-                            c.hyperlink = evi
-                            c.font = link_font
+
                     for i in range(1, 11): ws.column_dimensions[get_column_letter(i)].width = 22
                     wb.save(ruta_temp_xlsx)
                     wb.close()

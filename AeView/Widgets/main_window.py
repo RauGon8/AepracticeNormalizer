@@ -207,7 +207,7 @@ class MainWindow(QWidget):
             "orden_trabajo": self.ui.int_order.text(),
             "carpeta_salida": carpeta_salida
         }
-        self.worker = Worker(config)
+        self.worker = Worker.Worker(config)
 
         #conectamos las señales de progreso
         self.worker.progress.connect(self.update_progress_ui)
@@ -220,22 +220,30 @@ class MainWindow(QWidget):
         self.ui.plainTextEdit.appendPlainText(f">>> Sistema: Iniciando proceso. Salida en: {carpeta_salida}")
 
     def update_progress_ui(self, value, message):
-        """
-        actualizamos los componentes visuales de progreso desde la señal del backend
-
-        :param value: porcentaje numerico para la barra de progreso
-        :param message: el mensaje descriptivo para el log
-        """
+        """ actualizamos la barra y el log """
         self.ui.progressBar.setValue(value)
         self.ui.plainTextEdit.appendPlainText(message)
 
+        # Opcional: Forzar a que el scroll de texto baje automáticamente
+        scrollbar = self.ui.plainTextEdit.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
+
     def on_finished(self, result):
-        self.ui.plainTextEdit.appendPlainText(">>> Sistema: Proceso finalizado correctamente.")
+        """ Cuando el worker termina con éxito """
+        self.ui.plainTextEdit.appendPlainText(">>> Sistema: ¡PROCESO FINALIZADO CON ÉXITO! Excels y fotos generados.")
+        self.ui.progressBar.setValue(100)
         self.ui.pushButton.setEnabled(True)
 
+        # Te avisa con un pop-up de que ya puedes ir a ver la carpeta
+        QMessageBox.information(self, "¡Completado!",
+                                "Todos los Excels y fotos se han generado correctamente en la carpeta de salida.")
+
     def on_error(self, error_msg):
-        self.ui.plainTextEdit.appendPlainText(f"!!! ERROR: {error_msg}")
+        """ Si el worker explota, nos avisa """
+        self.ui.plainTextEdit.appendPlainText(f">>> SISTEMA (ERROR FATAL): {error_msg}")
+        self.ui.progressBar.setValue(0)
         self.ui.pushButton.setEnabled(True)
+        QMessageBox.critical(self, "Error de Ejecución", f"Ha ocurrido un error:\n\n{error_msg}")
 
     def closeEvent(self, event):
         """
