@@ -143,7 +143,7 @@ class MainWindow(QWidget):
                 self,
                 "Seleccionar archivo Excel",
                 "",
-                "Excel Files (*.xls *.xlsx);;All Files (*)"
+                "Excel Files (*.xls);;All Files (*)"
             )
             if ruta:
                 self.rutas_por_tipo[idx] = [ruta]
