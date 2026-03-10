@@ -94,8 +94,15 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
 
                 # 3. Buscamos directamente en las carpetas de origen
                 for nombre_hoja, ruta_xls in builder_instance.product.source_paths.items():
-                    # Buscamos en la carpeta que coincida con su hipótesis
-                    if hipotesis_origen.upper() in nombre_hoja.upper() or nombre_hoja.upper() in hipotesis_origen.upper():
+
+                    #limpiamos textos para comparar la hipotesis
+                    #quitamos espacios y los ponemos en mayusculas para evitar fallos
+                    hip_limpia_comparar = hipotesis_origen.strip().upper()
+                    hoja_limpia_comparar = nombre_hoja.strip().upper()
+
+
+                    if hip_limpia_comparar == hoja_limpia_comparar:
+
                         carpeta_origen = os.path.dirname(ruta_xls)
                         ruta_pictures = os.path.join(carpeta_origen, "pictures")
 
@@ -104,6 +111,8 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
                             for f in os.listdir(ruta_pictures):
                                 if f.lower().endswith(('.jpg', '.jpeg', '.png')):
                                     nombre_sin_ext = os.path.splitext(f)[0]
+
+                                    # Buscamos que el nombre de la foto encaje con el ID
                                     if nombre_sin_ext == id_interno or f.startswith(f"{id_interno}-") or f.startswith(
                                             f"{id_interno}_"):
                                         archivo_real = f
@@ -120,11 +129,14 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
                     lin_limpia = nombre_circuito.replace('-', '').upper()
                     vano_limpio = str(fila.get(col_vano, 'VANO')).strip().replace('-', '_')
 
-                    #
-                    nuevo_nombre = f"{id_nuevo_global}_{siglas_tipo}_{hip_limpia}_{lin_limpia}_{vano_limpio}_{id_interno}{os.path.splitext(archivo_real)[1]}"
+                    # Evitamos posibles decimales en el ID interno
+                    id_orig_limpio = str(int(float(id_interno))) if id_interno.replace('.',
+                                                                                       '').isdigit() else id_interno
 
-                    ruta_destino = os.path.join(ruta_fotos_tipo, nuevo_nombre)
-                    shutil.copy2(os.path.join(ruta_pictures_encontrada, archivo_real), ruta_destino)
+                    nuevo_nombre = f"{id_nuevo_global}_{siglas_tipo}_{hip_limpia}_{lin_limpia}_{vano_limpio}_{id_orig_limpio}{os.path.splitext(archivo_real)[1]}"
+
+                    shutil.copy2(os.path.join(ruta_pictures_encontrada, archivo_real),
+                                 os.path.join(ruta_fotos_tipo, nuevo_nombre))
                     df_tipo.at[index, 'Evidencia_Grafica_Ruta'] = f"{tipo}/{nuevo_nombre}"
 
             #openpyxl
@@ -200,7 +212,7 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
                     ws.row_dimensions[2].height = 140
                     ws.row_dimensions[3].height = 20
 
-                    for i in range(1, 11): ws.column_dimensions[get_column_letter(i)].width = 22
+                    for i in range(1, 20): ws.column_dimensions[get_column_letter(i)].width = 22
 
                     wb.save(ruta_temp_xlsx)
                     wb.close()
@@ -215,7 +227,7 @@ def export_final_data_steep6(builder_instance, carpeta_salida, orden_trabajo):
                     df_ext['Texto Ampliado'] = ""
                     df_ext['Repercusión'] = df_tipo.get('Grado_Final', 0)
                     df_ext['Reglamento de Aplicación'] = df_tipo.get('REGLAMENTO', "")
-                    df_ext['Temperatura max de diseño de la linea'] = df_tipo.get('TEMP_MAX', "")
+                    df_ext['Temperatura max de diseño de la linea'] = 50
                     codigos = df_tipo.get('Codigo', "").fillna("")
                     descripciones = df_tipo.get('Descripción', "").fillna("")
                     df_ext['Código caracteristico - Descripción'] = codigos.astype(str) + " - " + descripciones.astype(
