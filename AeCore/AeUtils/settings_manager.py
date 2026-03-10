@@ -52,10 +52,8 @@ class SettingsManager:
             datos["rutas_guardadas"] = defaults["rutas_guardadas"]
 
         # leemos el resto de valores simples de la interfaz principal
-        datos["tipo_archivo_seleccionado"] = self.settings.value("tipo_archivo_seleccionado",
-                                                                 defaults["tipo_archivo_seleccionado"], type=int)
-        datos["orden_trabajo_texto"] = self.settings.value("orden_trabajo_texto", defaults["orden_trabajo_texto"],
-                                                           type=str)
+        datos["tipo_archivo_seleccionado"] = self.settings.value("tipo_archivo_seleccionado",defaults["tipo_archivo_seleccionado"], type=int)
+        datos["orden_trabajo_texto"] = self.settings.value("orden_trabajo_texto", defaults["orden_trabajo_texto"],type=str)
 
         return datos
 

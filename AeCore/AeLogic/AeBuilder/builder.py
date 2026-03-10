@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 import pandas as pd
 
-from AeCore.AeLogic.steep1 import extract_map_and_ids_steep1
-from AeCore.AeLogic.steep2 import select_worst_hypothesis_steep2
-from AeCore.AeLogic.steep3 import combine_information_steep3
-from AeCore.AeLogic.steep4 import apply_porteman_steep4
-from AeCore.AeLogic.steep5 import link_vanos_info_steep5
-from AeCore.AeLogic.steep6 import export_final_data_steep6
+from AeCore.AeLogic.AeBuilder.steep1 import extract_map_and_ids_steep1
+from AeCore.AeLogic.AeBuilder.steep2 import select_worst_hypothesis_steep2
+from AeCore.AeLogic.AeBuilder.steep3 import combine_information_steep3
+from AeCore.AeLogic.AeBuilder.steep4 import apply_porteman_steep4
+from AeCore.AeLogic.AeBuilder.steep5 import link_vanos_info_steep5
+from AeCore.AeLogic.AeBuilder.steep6 import export_final_data_steep6
 
 
 class AeAnomaliesProduct:
