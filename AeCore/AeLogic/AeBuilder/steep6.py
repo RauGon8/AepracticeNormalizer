@@ -39,6 +39,9 @@ class LiteExporter(XlsExporter):
                      'Distancia_Final', 'CUMPLE', 'NOTAS']
         df_lite = df_tipo.reindex(columns=cols_lite)
 
+        #cogemos los ultimos 3 y lo ponemos como entero para que asi salga en el id 12, 189, etc...
+        df_lite['ID'] = df_lite['ID'].astype(str).str[-3:].astype(int)
+
         # exportamos los datos base dejando 3 filas para la cabecera
         df_lite.to_excel(ruta_temp_xlsx, index=False, startrow=3, header=False, engine='openpyxl')
 
