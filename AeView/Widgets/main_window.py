@@ -1,4 +1,3 @@
-import sys
 from PySide6.QtWidgets import QApplication, QWidget, QFileDialog, QMessageBox
 from PySide6.QtCore import Qt, QRect, QStringListModel
 

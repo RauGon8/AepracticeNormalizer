@@ -1,8 +1,5 @@
 import pandas as pd
 from aelogging import info, error
-from dateutil.tz import datetime_exists
-from pandas import read_table
-from xlrd.formula import adjust_cell_addr_biff8
 
 
 def link_vanos_info_steep5(builder_instance, ruta_vanos):

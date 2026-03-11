@@ -1,5 +1,4 @@
 import os
-import sys
 
 from AeCore.AeLogic.AeFacade.facade import AeFacade
 
